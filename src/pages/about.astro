@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+<Layout
+  title="About — Margins"
+  description="Margins is a small, slow tech blog. Essays, notes, and thoughts on the tools we build and live inside."
+>
+  <SiteHeader />
+  <main class="mx-auto max-w-2xl px-6 py-20 sm:py-28">
+    <p class="font-mono text-xs uppercase tracking-[0.24em] text-muted-foreground">
+      Colophon
+    </p>
+    <h1 class="mt-4 font-serif text-5xl leading-tight tracking-tight">
+      A small, slow place to think out loud.
+    </h1>
+
+    <div class="prose-blog mt-10">
+      <p>
+        Margins is a personal tech blog. It exists because the timelines are loud
+        and the group chats are louder, and sometimes a thought needs a page to
+        stretch out on.
+      </p>
+      <p>
+        You'll find essays here — the kind that take a week to write and ten minutes
+        to read. You'll also find notes, reviews, and half-formed thoughts I haven't
+        finished arguing with yet. Everything is dated. Nothing is final.
+      </p>
+      <h2>What it's about</h2>
+      <p>
+        Software, mostly. The craft of making it, the strangeness of using it, the
+        quiet ways it reshapes our days. Occasional detours into keyboards, type,
+        and the long history of people trying to write things down.
+      </p>
+      <h2>What it isn't</h2>
+      <p>
+        A newsletter funnel. A content engine. A personal brand. There is no signup
+        form because there is nothing to sign up for. Come back when you feel like
+        it.
+      </p>
+      <blockquote>
+        Write the post you wish someone else had written, then go for a walk.
+      </blockquote>
+    </div>
+  </main>
+  <SiteFooter />
+</Layout>

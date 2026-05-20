@@ -1,0 +1,48 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+}
+
+const {
+  title,
+  description,
+  ogTitle,
+  ogDescription,
+  ogImage,
+  ogType = 'website',
+} = Astro.props;
+
+const finalOgTitle = ogTitle ?? title;
+const finalOgDescription = ogDescription ?? description;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={finalOgTitle} />
+    {finalOgDescription && <meta property="og:description" content={finalOgDescription} />}
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    {finalOgTitle && <meta name="twitter:title" content={finalOgTitle} />}
+    {finalOgDescription && <meta name="twitter:description" content={finalOgDescription} />}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen bg-background text-foreground">
+    <slot />
+  </body>
+</html>

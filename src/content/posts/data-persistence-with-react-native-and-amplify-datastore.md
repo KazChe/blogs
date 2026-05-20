@@ -39,13 +39,13 @@ Before starting this tutorial, you will need the following:
 
 We're working off of a very simple React Native app that for now simply takes some tasks and displays them. You can also delete the todo items and it removes them from the UI. However, what this app can not do at this time is to store these updates anywhere. If you add an item or delete an item, kill the app and re-start it none of your changes are persisted anywhere.
 
-!["TODOs app with todo items"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/todosoverview.png?raw=true align="left")
+!["TODOs app with todo items"](/images/amplify-datastore-android/todosoverview.png)
 
 However, there are a few problems. One is if the app is closed and or re-loaded we lose our todo items, see screenshots below. Also, our app lacks authentication, and in addition at some point we would ideally want to synchronize its data back and forth to a backend datastore.
 
 Reloading           |  After Reload
 :-------------------------:|:-------------------------:
-!["TODOs app reloading"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/2_app_reloading45.png?raw=true)  |  !["TODOs after reloading"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/3_data_loss45.png?raw=true)
+!["TODOs app reloading"](/images/amplify-datastore-android/2_app_reloading45.png)  |  !["TODOs after reloading"](/images/amplify-datastore-android/3_data_loss45.png)
 
 First, a high level overview of the code base for the app before evolving its features. There are two main components, `TodoInput.js` and `TodoItem.js` that are then are referenced in our `App.js` to bring everything together.
 
@@ -306,7 +306,7 @@ export default TodoInput = (props) => {
 
 In this component's `handleAddTask` function expression we refactored it to instantiate a new Todo object, call the `save` method from Amplify's DataStore API `DataStore.save()`, then assigning a value passed from UI for Todo's value and finally an arbitrary id, that's it. Take note that we modified the function to use `aync-await` given we're going a database which is an asynchronous operation. Moving to `App.js` and main modifications:
 
-```Javascript
+```javascript
 useEffect(() => {
     fetchTasks();
   }, []);
@@ -407,7 +407,7 @@ these are screenshots of when we have Amplify DataStore applied to enable local 
 
 Re-loading with DataStore | After re-loading
 :-------------------------:|:-------------------------:
-!["TODOs app reloading with DataStore enabled"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/1_reload_with_amplify_ds45.png?raw=true)  |  !["TODOs app after reload with DataStore enabled"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/2_realoded_amplify_ds45.png?raw=true)
+!["TODOs app reloading with DataStore enabled"](/images/amplify-datastore-android/1_reload_with_amplify_ds45.png)  |  !["TODOs app after reload with DataStore enabled"](/images/amplify-datastore-android/2_realoded_amplify_ds45.png)
 
 
 Below we are demonstrating a delete action. We deleted what used to be item 4 `Buy Coffee` and likewise, when deleting an item we used Amplify DataStore to handle the local storage delete for us. Screenshots below depict this behavior:
@@ -415,7 +415,7 @@ Below we are demonstrating a delete action. We deleted what used to be item 4 `B
 
 App re-loading | App after re-loading
 :-------------------------:|:-------------------------:
-!["Deleted an item and re-loading"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/1_deleted_item_reloading45.png?raw=true)  |  !["After reload we show the current state with Buy Coffee deleted"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/2_reloaded_after_delete45.png?raw=true)
+!["Deleted an item and re-loading"](/images/amplify-datastore-android/1_deleted_item_reloading45.png)  |  !["After reload we show the current state with Buy Coffee deleted"](/images/amplify-datastore-android/2_reloaded_after_delete45.png)
 
 ## Using Amplify to add authentication
 
@@ -423,23 +423,23 @@ Before adding authentication to our app there are few housekeeping items we are 
 
 `amplify init` initializes a new project, sets up deployment resources in the cloud and makes your project ready for Amplify.
 
-!["Output from running amplify init"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/amplify-init.png?raw=true align="left")
+!["Output from running amplify init"](/images/amplify-datastore-android/amplify-init.png)
 
 resources created running `amplify init` are used by Amplify itself these are not part of your application.
 
 Now that we have initialized our app the result of `amplify-status` shows the state of local resources not yet pushed to the cloud (Create/Update/Delete). In our case `amplifyDatasource` API.
 
-!["Output from running amplify status"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/amplify-status.png?raw=true align="left")
+!["Output from running amplify status"](/images/amplify-datastore-android/amplify-status.png)
 
 and a look at our AWS Amplify console we see that our app was deployed
 
-!["AWS Amplify Console"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/amplify-console-init.png?raw=true align="left")
+!["AWS Amplify Console"](/images/amplify-datastore-android/amplify-console-init.png)
 
 Authentication and authorization are two primary means of securing applications. Using authentication we can verify you are who you say you are or ensure the identity of the user or a system trying to access our application. Authorization on the other hand determines what you can do inside the application or your access rights after your identity has been established or has been authenticated.
 
 Currently, the Authorization mode for the DataStore in the app is set to API key but we want to use AWS Cognito instead. We can execute `amplify add auth` to first add authentication using AWS Cognito followed by `amplify status` to see where we stand
 
-!["Output from running amplify add auth"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/amplify-add-auth.png?raw=true align="left")
+!["Output from running amplify add auth"](/images/amplify-datastore-android/amplify-add-auth.png)
 
 It's time to add the necessary dependency to `App.js` so Amplify can handle user registration and authentication for us on the UI.
 
@@ -528,21 +528,21 @@ export default withAuthenticator(App);
 
 Now, we can update our datastore to use AWS Cognito using `amplify update api`
 
-!["Output from running amplify update api"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/amplify-update-api.png?raw=true align="left")
+!["Output from running amplify update api"](/images/amplify-datastore-android/amplify-update-api.png)
 
 We can now push our changes to the cloud. Run `amplify push` and monitor its progress as it will take a few minutes to complete and should see something similar to the screenshot below:
 
-!["Output from running amplify push"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/amplify-push.png?raw=true align="left")
+!["Output from running amplify push"](/images/amplify-datastore-android/amplify-push.png)
 
 At this point, it's a good idea to take a peek at our AWS backend that was set up for us by Amplify CLI specifically DynamoDB which DataStore uses to store our data.
 
-!["A look at the DynamoDB table before data sync"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/ddb-before.png?raw=true align="left")
+!["A look at the DynamoDB table before data sync"](/images/amplify-datastore-android/ddb-before.png)
 
 Start the app to see the signin/signup UI added for us via Amplify. Tap on `Sing Up`, complete the form and you should receive an email with your confirmation code. Once you provide your confirmation code, you will be redirected to signin page. Login with your username and password.
 
 Singup | Signin
 :-------------------------:|:-------------------------:
-!["Default Cognito Sign Up screen"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/confirm-sign-up.png?raw=true)  |  !["Cognito Sign in screen after confirming Sing Up"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/signin.png?raw=true)
+!["Default Cognito Sign Up screen"](/images/amplify-datastore-android/confirm-sign-up.png)  |  !["Cognito Sign in screen after confirming Sing Up"](/images/amplify-datastore-android/signin.png)
 
 ## Testing happy path
 
@@ -550,15 +550,15 @@ We're going to do some testing by adding a few test entries, and validate DataSt
 
 DynamoDB table before sync
 
-!["DynamoDB table before sync"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/empty-ddb.png?raw=true align="left")
+!["DynamoDB table before sync"](/images/amplify-datastore-android/empty-ddb.png)
 
 adding a few todo entries
 
-!["Adding few todo entries"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/bread-milk.png?raw=true align="left")
+!["Adding few todo entries"](/images/amplify-datastore-android/bread-milk.png)
 
 and validate the sync on DynamoDB side
 
-!["DynamoDB table now populated with our new entries"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/ddb-bread-milk.png?raw=true align="left")
+!["DynamoDB table now populated with our new entries"](/images/amplify-datastore-android/ddb-bread-milk.png)
 
 Both todo entries were sync'd via DataStore into DynamoDB table
 
@@ -566,25 +566,25 @@ Both todo entries were sync'd via DataStore into DynamoDB table
 
 To simulate a network connectivity issue - I did this by just disconnecting my WiFi on my laptop - then adding a new Todo entry in the app
 
-!["Adding new todo entry while offline"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/offline-add.png?raw=true align="left")
+!["Adding new todo entry while offline"](/images/amplify-datastore-android/offline-add.png)
 
 check DynamoDB to make the sure new entry was not sync'd on a different computer
 
-!["No sync was performed on our DynamoDB table"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/ddb-with-app-offile.png?raw=true align="left")
+!["No sync was performed on our DynamoDB table"](/images/amplify-datastore-android/ddb-with-app-offile.png)
 
 after establishing WiFi connection we see that our new todo has been sync'd
 
-!["Data sync was performed right after re-establishing our network connection"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/ddb-after-connection.png?raw=true align="left")
+!["Data sync was performed right after re-establishing our network connection"](/images/amplify-datastore-android/ddb-after-connection.png)
 
 ## Testing a delete operation
 
 We bought our bread, so go ahead and delete it from list the in the app
 
-!["Deleting Get Bread item from the app"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/delete-bread.png?raw=true align="left")
+!["Deleting Get Bread item from the app"](/images/amplify-datastore-android/delete-bread.png)
 
 Check the table and you can see that `Get bread` has been marked under `_deleted` column as `true`
 
-!["Deletion of Get Bread item sync'd with our DynamoDB table - see _deleted column set to true"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/ddb-bread-marked-deleted.png?raw=true align="left")
+!["Deletion of Get Bread item sync'd with our DynamoDB table - see _deleted column set to true"](/images/amplify-datastore-android/ddb-bread-marked-deleted.png)
 
 ## Adding a Sing Out button
 
@@ -616,7 +616,7 @@ async function signOut() {
 
 reload your app
 
-!["Sign Out button displayed after logout"](https://github.com/KazChe/blogs/blob/main/amplify/amplify-datastore-android/images/sign-out.png?raw=true align="left")
+!["Sign Out button displayed after logout"](/images/amplify-datastore-android/sign-out.png)
 
 ## What next
 

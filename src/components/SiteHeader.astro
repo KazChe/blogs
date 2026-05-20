@@ -1,0 +1,35 @@
+---
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/' || pathname === '';
+const isAbout = pathname.startsWith('/about');
+---
+<header class="border-b border-border">
+  <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+    <a href="/" class="group flex items-baseline gap-2">
+      <span class="font-serif text-2xl leading-none tracking-tight">Margins</span>
+      <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        est. 2026
+      </span>
+    </a>
+    <nav class="flex items-center gap-6 font-mono text-xs uppercase tracking-[0.18em]">
+      <a
+        href="/"
+        class:list={[
+          'transition-colors hover:text-foreground',
+          isHome ? 'text-foreground' : 'text-muted-foreground',
+        ]}
+      >
+        Writing
+      </a>
+      <a
+        href="/about"
+        class:list={[
+          'transition-colors hover:text-foreground',
+          isAbout ? 'text-foreground' : 'text-muted-foreground',
+        ]}
+      >
+        About
+      </a>
+    </nav>
+  </div>
+</header>

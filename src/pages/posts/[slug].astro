@@ -1,0 +1,108 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Layout from '../../layouts/Layout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { category, excerpt, formatDate, readTime, tagList, type Post } from '../../lib/posts';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('posts');
+  const sorted = posts.sort(
+    (a: Post, b: Post) => b.data.datePublished.getTime() - a.data.datePublished.getTime()
+  );
+  return sorted.map((post: Post, index: number) => {
+    const next = sorted[index + 1] ?? sorted[0];
+    return {
+      params: { slug: post.data.slug },
+      props: { post, next },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: Post;
+  next: Post;
+}
+const { post, next } = Astro.props;
+const { Content } = await render(post);
+const postExcerpt = excerpt(post);
+const tags = tagList(post);
+---
+<Layout
+  title={`${post.data.title} — Margins`}
+  description={postExcerpt}
+  ogTitle={post.data.title}
+  ogDescription={postExcerpt}
+  ogImage={post.data.ogImage ?? post.data.cover}
+  ogType="article"
+>
+  <SiteHeader />
+
+  <article class="mx-auto max-w-2xl px-6 py-16 sm:py-24">
+    <a
+      href="/"
+      class="mb-12 inline-block font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+    >
+      ← All writing
+    </a>
+
+    <div class="mb-6 flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+      <span class="text-accent">{category(post)}</span>
+      <span>·</span>
+      <span>{formatDate(post.data.datePublished)}</span>
+      <span>·</span>
+      <span>{readTime(post)}</span>
+    </div>
+
+    <h1 class="font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl">
+      {post.data.title}
+    </h1>
+
+    {postExcerpt && (
+      <p class="mt-6 border-l-2 border-accent pl-5 font-serif text-xl italic leading-relaxed text-muted-foreground">
+        {postExcerpt}
+      </p>
+    )}
+
+    {post.data.cover && (
+      <img
+        src={post.data.cover}
+        alt=""
+        class="mt-10 w-full rounded"
+        loading="eager"
+      />
+    )}
+
+    <hr class="my-12 border-border" />
+
+    <div class="prose-blog">
+      <Content />
+    </div>
+
+    {tags.length > 0 && (
+      <div class="mt-12 flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+        {tags.map((t: string) => (
+          <span class="rounded-full border border-border px-2.5 py-1">#{t}</span>
+        ))}
+      </div>
+    )}
+
+    <hr class="my-16 border-border" />
+
+    <a
+      href={`/posts/${next.data.slug}`}
+      class="group block rounded-md border border-border bg-card p-6 transition-colors hover:border-accent"
+    >
+      <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+        Read next →
+      </div>
+      <div class="mt-2 font-serif text-2xl leading-tight tracking-tight group-hover:text-accent">
+        {next.data.title}
+      </div>
+      <div class="mt-2 text-sm text-muted-foreground">{excerpt(next)}</div>
+    </a>
+  </article>
+
+  <SiteFooter />
+</Layout>

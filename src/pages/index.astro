@@ -1,17 +1,99 @@
 ---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { category, excerpt, formatDate, readTime, type Post } from '../lib/posts';
 
+const allPosts = await getCollection('posts');
+const posts = allPosts.sort(
+  (a: Post, b: Post) => b.data.datePublished.getTime() - a.data.datePublished.getTime()
+);
+
+const [featured, ...rest] = posts;
 ---
+<Layout
+  title="Margins — a quiet tech blog"
+  description="Essays, notes, and small thoughts on and around technology. Written slowly, published quietly."
+>
+  <SiteHeader />
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+  <section class="border-b border-border">
+    <div class="mx-auto max-w-3xl px-6 py-20 sm:py-28">
+      <p class="mb-6 font-mono text-xs uppercase tracking-[0.24em] text-muted-foreground">
+        A field journal for the web
+      </p>
+      <h1 class="font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl">
+        Essays, notes, and the occasional half-thought on technology and the
+        <em class="text-accent"> people </em>
+        who shape it.
+      </h1>
+      <p class="mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground">
+        No newsletter pop-up. No autoplay. Just writing — short and long, sharp and
+        soft — about the tools we build and live inside.
+      </p>
+    </div>
+  </section>
+
+  <main class="mx-auto max-w-3xl px-6 py-16">
+    {featured && (
+      <a
+        href={`/posts/${featured.data.slug}`}
+        class="group block border-b border-border pb-12"
+      >
+        <div class="mb-4 flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+          <span class="text-accent">★ Latest</span>
+          <span>·</span>
+          <span>{category(featured)}</span>
+          <span>·</span>
+          <span>{formatDate(featured.data.datePublished)}</span>
+        </div>
+        <h2 class="font-serif text-4xl leading-tight tracking-tight transition-colors group-hover:text-accent sm:text-5xl">
+          {featured.data.title}
+        </h2>
+        <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
+          {excerpt(featured)}
+        </p>
+        <span class="mt-6 inline-block font-mono text-xs uppercase tracking-[0.18em] underline decoration-accent decoration-2 underline-offset-4">
+          Read the post →
+        </span>
+      </a>
+    )}
+
+    {rest.length > 0 && (
+      <div class="mt-12">
+        <h3 class="mb-8 font-mono text-xs uppercase tracking-[0.24em] text-muted-foreground">
+          More writing
+        </h3>
+        <ul class="divide-y divide-border">
+          {rest.map((p) => (
+            <li>
+              <a
+                href={`/posts/${p.data.slug}`}
+                class="group grid gap-2 py-8 sm:grid-cols-[140px_1fr] sm:gap-8"
+              >
+                <div class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground sm:pt-2">
+                  <div>{formatDate(p.data.datePublished).split(',')[0]}</div>
+                  <div class="mt-1 text-accent">{category(p)}</div>
+                </div>
+                <div>
+                  <h4 class="font-serif text-2xl leading-snug tracking-tight transition-colors group-hover:text-accent">
+                    {p.data.title}
+                  </h4>
+                  <p class="mt-2 text-base leading-relaxed text-muted-foreground">
+                    {excerpt(p)}
+                  </p>
+                  <div class="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                    {readTime(p)} read
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </main>
+
+  <SiteFooter />
+</Layout>
