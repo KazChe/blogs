@@ -1,4 +1,4 @@
-name: Deploy to DO Spaces
+name: Deploy to droplet
 
 on:
   push:
@@ -11,6 +11,12 @@ permissions:
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  DEPLOY_HOST: 138.68.238.161
+  DEPLOY_USER: root
+  DEPLOY_PATH: /var/www/untounium.dev/
+  SITE_URL: https://untounium.dev
 
 jobs:
   deploy:
@@ -26,44 +32,33 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build site
-        env:
-          SITE_URL: ${{ secrets.SITE_URL }}
         run: bun run build
 
-      - name: Sync hashed assets (immutable, 1y cache)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET }}
-          AWS_REGION: us-east-1
+      - name: Setup SSH key
         run: |
-          aws s3 sync dist/ s3://${{ secrets.DO_SPACES_BUCKET }}/ \
-            --endpoint-url https://${{ secrets.DO_SPACES_ENDPOINT }} \
-            --acl public-read \
-            --delete \
-            --exclude "*.html" \
-            --exclude "*.xml" \
-            --exclude "*.txt" \
-            --cache-control "public, max-age=31536000, immutable"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.BLOG_DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
-      - name: Sync HTML/XML/TXT (short cache, must revalidate)
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.DO_SPACES_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SPACES_SECRET }}
-          AWS_REGION: us-east-1
+      - name: Pin droplet host key
         run: |
-          aws s3 sync dist/ s3://${{ secrets.DO_SPACES_BUCKET }}/ \
-            --endpoint-url https://${{ secrets.DO_SPACES_ENDPOINT }} \
-            --acl public-read \
-            --exclude "*" \
-            --include "*.html" \
-            --include "*.xml" \
-            --include "*.txt" \
-            --cache-control "public, max-age=300, must-revalidate"
+          cat >> ~/.ssh/known_hosts <<'EOF'
+          138.68.238.161 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBhGFrgsrB9IioA8pL4/vbDR2XmGZKyyLhkPUNvF4EYC
+          EOF
+          chmod 644 ~/.ssh/known_hosts
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DO_API_TOKEN }}
+      - name: Rsync dist to droplet
+        run: |
+          rsync -avz --delete --human-readable \
+            -e "ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes" \
+            dist/ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
 
-      - name: Purge CDN cache
-        run: doctl compute cdn flush ${{ secrets.DO_CDN_ID }} --files '*'
+      - name: Smoke test
+        run: |
+          curl -fsSL -o /dev/null -w "homepage: %{http_code}\n" "${SITE_URL}/"
+          curl -fsSL -o /dev/null -w "about:    %{http_code}\n" "${SITE_URL}/about/"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
