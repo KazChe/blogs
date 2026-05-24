@@ -17,25 +17,29 @@ editor's TypeScript server gets stale (rarely needed in normal use).
 
 ## Writing a post
 
-Drop a `.md` file in `src/content/posts/`. The filename should match the frontmatter
-`slug` (it determines the URL). Frontmatter schema:
+Drop a `.md` file in `src/content/posts/`. **The filename (minus `.md`) is the URL slug** —
+e.g. `simple-cli-spinner.md` → `https://untounium.dev/posts/simple-cli-spinner`.
+
+Frontmatter schema:
 
 ```yaml
 ---
 title: "Post title"
-datePublished: 2026-05-19T10:00:00.000Z
-cuid: cuid-from-hashnode-or-any-unique-id
-slug: post-slug-matching-filename
-cover: https://cdn.example.com/cover.jpg
+datePublished: 2026-05-24T10:00:00.000Z
+cover: https://cdn.example.com/cover.jpg            # or /images/local.jpg
 seoTitle: "Optional shorter title for SEO"          # optional
-seoDescription: "Optional summary, also used as excerpt."  # optional
-ogImage: https://cdn.example.com/og-image.png       # optional
-tags: tag-one, tag-two, tag-three                   # optional, comma-separated
+seoDescription: "Optional summary, also used as the homepage excerpt and meta description."  # optional
+ogImage: https://cdn.example.com/og-image.png       # optional, falls back to cover
+tags: tag-one, tag-two, tag-three                   # optional, comma-separated; first tag shows as category pill
 ---
 ```
 
+`cover` accepts either a full URL (CDN, S3, etc.) or a site-absolute path like
+`/images/foo.jpg` pointing at `public/images/foo.jpg`.
+
 The schema is enforced by Zod in `src/content.config.ts` — `astro build` fails if
-a post doesn't validate.
+a post doesn't validate. Unknown frontmatter fields (e.g. legacy `cuid`/`slug` on
+imported Hashnode posts) are silently stripped.
 
 The post body is standard markdown. Code fences are syntax-highlighted by Shiki
 (`github-dark-dimmed`). Use lowercase language identifiers (`javascript`, not

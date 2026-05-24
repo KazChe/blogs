@@ -14,7 +14,7 @@ export const getStaticPaths = (async () => {
   return sorted.map((post: Post, index: number) => {
     const next = sorted[index + 1] ?? sorted[0];
     return {
-      params: { slug: post.data.slug },
+      params: { slug: post.id },
       props: { post, next },
     };
   });
@@ -91,7 +91,7 @@ const tags = tagList(post);
     <hr class="my-16 border-border" />
 
     <a
-      href={`/posts/${next.data.slug}`}
+      href={`/posts/${next.id}`}
       class="group block rounded-md border border-border bg-card p-6 transition-colors hover:border-accent"
     >
       <div class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">

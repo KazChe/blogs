@@ -21,7 +21,9 @@ const {
 
 const finalOgTitle = ogTitle ?? title;
 const finalOgDescription = ogDescription ?? description;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const siteBase = Astro.site ?? Astro.url;
+const canonical = new URL(Astro.url.pathname, siteBase).toString();
+const finalOgImage = ogImage ? new URL(ogImage, siteBase).toString() : undefined;
 ---
 <!doctype html>
 <html lang="en">
@@ -35,11 +37,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
     {finalOgDescription && <meta property="og:description" content={finalOgDescription} />}
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />
-    {ogImage && <meta property="og:image" content={ogImage} />}
-    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    {finalOgImage && <meta property="og:image" content={finalOgImage} />}
+    <meta name="twitter:card" content={finalOgImage ? 'summary_large_image' : 'summary'} />
     {finalOgTitle && <meta name="twitter:title" content={finalOgTitle} />}
     {finalOgDescription && <meta name="twitter:description" content={finalOgDescription} />}
-    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    {finalOgImage && <meta name="twitter:image" content={finalOgImage} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body class="min-h-screen bg-background text-foreground">
