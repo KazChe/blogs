@@ -1,11 +1,8 @@
 ---
 title: "A fragmented instrument for Gen AI Observability"
-seoDescription: "OpenTelemetry's GenAI semantic conventions are being adopted into an ecosystem that is fragmenting on three fronts at once, and the fronts compound each other."
 datePublished: 2026-05-24T12:00:00.000Z
-cuid: draft-2026-05-24
 slug: a-fragmented-instrument-for-genai-observability
 cover: https://dhbtuus86mod.cloudfront.net/otel-genai-fragmentation-v2.jpg
-tags: draft
 ---
 
 ## Why I wrote this
@@ -26,7 +23,7 @@ OpenTelemetry's GenAI semantic conventions are being adopted into an ecosystem t
 
 Each agent runtime emits its own GenAI telemetry shape and carries its own internal context-propagation model. AutoGen, CrewAI, LangGraph, Haystack, PydanticAI, LlamaIndex, and Google ADK each make different choices about what counts as an inference span vs a tool span, which boundaries (sync, async, thread, subprocess, event-loop hop, framework-managed worker) preserve OTel context, and whether tool-call payloads pass through validation layers that silently strip unknown fields. The targeted tests in `frameworks/*/` in this repo were necessary because assumptions that hold in one runtime routinely fail in another.
 
-**Front 2 -  Instrumentation libraries.**
+**Front 2 - Instrumentation libraries.**
 
 Even where the underlying runtime is consistent, the instrumentation libraries that wrap it adopt OTel GenAI semconv unevenly. A `chat` span produced by one library and an `execute_tool` span produced by another may not share a parent, may not share a context, and may not even agree on which attributes belong on which span. The cross-library cases documented in [ISSUE_CAUSALITY.md](https://github.com/KazChe/otel-genai-semconv-grouping-causality-prototype/blob/main/ISSUE_CAUSALITY.md), where `inference` and `tool` spans are emitted by independent libraries whose lifecycles do not overlap, are a direct symptom of this front.
 
