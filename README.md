@@ -3,6 +3,8 @@
 A quiet tech blog. Built with [Astro](https://astro.build), Tailwind v4, and Bun.
 Posts live as markdown in `src/content/posts/` and ship as static HTML to Digital Ocean Spaces + CDN.
 
+Some posts have been migrated from https://kamc.hashnode.dev/ dating back to 2023
+
 ## Local development
 
 ```sh
