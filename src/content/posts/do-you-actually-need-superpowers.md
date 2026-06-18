@@ -5,10 +5,9 @@ slug: do-you-actually-need-superpowers
 cover: https://dhbtuus86mod.cloudfront.net/superpowers.jpg
 ---
 
-
 # Do You Actually Need an Agentic Coding Framework?
 
-I keep running into frameworks like [Superpowers](https://github.com/obra/superpowers). Call them frameworks, skill libraries, methodologies, whatever you want. The pitch is always some version of the same thing: give your coding agent a structured way to work, and it'll stop flailing and start shipping. They clearly have benefits, especially if you're doing large-scale development. But I've got a development background, and the way I already work with coding agents is pretty simple. I come up with phases during initial planning, I bake in a test-first approach as part of that planning, then I go through the feedback loop. Reiterate, change, move forward. So I wanted to figure out, honestly, do I actually need one of these?
+I keep running into frameworks like [Superpowers](https://github.com/obra/superpowers). Call them frameworks, skill libraries, methodologies, whatever you want. The pitch is always some version of the same thing: give your coding agent a structured way to work, and it'll stop flailing and start shipping. They clearly have benefits, especially if you're doing large-scale development. But if you got a development background, and the way you already work with coding agents is pretty simple. I come up with phases during initial planning, I bake in a test-first approach as part of that planning, then I go through the feedback loop. Reiterate, change, move forward. So I wanted to figure out, honestly, do I actually need one of these?
 
 I went and read through what Superpowers actually is. And here's the thing I noticed.
 
