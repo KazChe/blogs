@@ -242,9 +242,7 @@ Two details mattered from the start.
 
 **Group the turns into one Session.** Each turn is its own trace, but they belong to one conversation. OpenTelemetry has a standard attribute for exactly this, `gen_ai.conversation.id`, and Galileo reads it to fold every turn into a single Session, keyed by the Claude Code session id. Tag the spans with it and the grouping is automatic.
 
-<!-- TODO screenshot 1 (load-bearing): the Galileo log-stream view showing one Session
-that contains multiple traces (turns). The point of the shot is "many turns, one
-session," so expand the session row to show its child traces. -->
+![The Galileo view of one Session expanded to show its child traces: every turn of the Claude Code conversation folded under a single Session via the gen_ai.conversation.id attribute, with each turn's invoke_agent, chat, and tool spans nested beneath it.](https://dhbtuus86mod.cloudfront.net/Shot1_session_grouping.png)
 
 ## War story 2: collector vs. direct, pick your battle
 
@@ -263,10 +261,7 @@ I wired up the judge, an Anthropic model grading each turn, enabled Galileo's bu
 
 Every single turn scored a perfect **1.0**.
 
-<!-- TODO screenshot 2 (load-bearing): a scored session where turns with obviously-wrong
-tool choices all show Tool Selection Quality = 1.0 / all "correct". This is the "looks
-great, means nothing" shot; pick a session with a clearly dubious tool call so the 1.0
-looks wrong. -->
+![A Claude Code session scored by Tool Selection Quality where every turn shows "true" for a perfect 1.0, even though the agent web-searched for local git state and used Read to try to delete a file. Without the tool catalog on the span, the judge sees no alternatives and passes everything.](https://dhbtuus86mod.cloudfront.net/Shot2_the%20false1_0_without-catalog.png)
 
 This is the most important gotcha in the whole project, so it's worth stating plainly that:
 
@@ -284,9 +279,33 @@ The wrinkle I ran into: my plain GenAI spans kept landing in Galileo without a t
 
 The convention I got working was **Pydantic AI's**, and I picked it deliberately because it's built on the same GenAI semantics I was already emitting, so my inputs and outputs survived untouched. Specifically, mark the chat span with the framework's marker attribute, and attach the catalog as the framework's tool-definitions attribute, a list of `{name, description, parameters}` for each tool. The descriptions do the real work here. "Grep: search file _contents_ by regex to find where a symbol is defined or called" versus "WebSearch: search the public internet; cannot access local files or repo state." That contrast is what lets the judge **reason** about the right choice.
 
-Verified it landed: the model node in the stored trace now carried the full catalog, and the rest of the trace (turns, tool calls, session grouping) was unchanged.
+Verified it landed: the model node in the stored trace now carried the full catalog, and the rest of the trace (turns, tool calls, session grouping) was unchanged. Here's what the chat span carries once the catalog is attached, abridged to the two entries that decide the verdicts below:
 
-<!-- TODO: recreate the scenario on local glaileo instnce for screenshot -->
+```json
+[
+  {
+    "name": "Grep",
+    "description": "Search file CONTENTS across the codebase with a regex. Use to find where a symbol or function is defined or called.",
+    "parameters": {
+      "type": "object",
+      "properties": { "pattern": { "type": "string" }, "path": { "type": "string" }, "glob": { "type": "string" } },
+      "required": ["pattern"]
+    }
+  },
+  {
+    "name": "WebSearch",
+    "description": "Search the PUBLIC internet. Cannot access local files, the repository, or runtime state.",
+    "parameters": {
+      "type": "object",
+      "properties": { "query": { "type": "string" } },
+      "required": ["query"]
+    }
+  }
+  // ... plus Read, Edit, Write, Bash, Glob, WebFetch, Task, TodoWrite
+]
+```
+
+Ten tools, each with the shape the judge needs: a name, a schema, and above all a description that says what the tool is *for*. Read those two descriptions the way a judge would, and "what git branch is this repo on?" stops being a coin flip.
 
 **Where does the catalog come from?** I started with a static, hand-curated list of the core tools. Good enough to prove the mechanism, and the curated descriptions are an asset. But a real session's menu varies: MCP servers add tools, and we must remember that a hardcoded list drifts as the product evolves. 
 
@@ -319,17 +338,35 @@ With the catalog on the span and the tool call in the output, I sent a session w
 
 Session Tool Selection Quality: **0.25.** And crucially, it wasn't just failing everything. It **passed** the correct Read and **failed** the Read-used-to-delete. It's judging _appropriateness_, not pattern-matching tool names.
 
-<!-- TODO screenshot 3 (load-bearing, the money shot): the scored session showing the
-per-turn verdicts (the correct Read = pass, the WebSearch/Read-misuse turns = fail) with
-the overall Tool Selection Quality score. If the UI shows the judge's written rationale
-for a flagged turn, capture that too; the explanation of "why WebSearch was the wrong
-call here" is the most persuasive single image in the post. -->
+![The same session scored with the tool catalog attached: Tool Selection Quality drops to 0.25. The Read turn passes, while the two WebSearch-for-local-state turns and the Read-used-to-delete turn are all flagged as wrong tool choices.](https://dhbtuus86mod.cloudfront.net/Shot3_money%20shot_with-catalog.png)
 
-<!-- TODO screenshot 4 (optional): side-by-side (or two stacked shots) of the same style
-of session scoring 1.0 without the tool catalog and ~0.25 with it. The whole lesson in
-one picture. -->
+Click into a flagged turn and the judge shows its reasoning, not just a verdict:
+
+![The judge's written rationale for a flagged turn, explaining step by step why WebSearch was the wrong tool for a question about local repository state when Bash was available on the menu.](https://dhbtuus86mod.cloudfront.net/Shot3_1_the_judges_rationale.png)
+
+![Side by side: the identical four-turn session scored twice. On the left, without the tool catalog, every turn is "true" for 1.0 and the assistant bubbles show only prose. On the right, with the catalog, three turns are flagged "false" for 0.25 and the bubbles show the actual tool call the model chose. Same input, opposite verdicts.](https://dhbtuus86mod.cloudfront.net/Shot4_side-by-side_same%20fixture_catalog_off_shot2_vs_shot3_catalog_on.png)
 
 Compare that to where we started, a meaningless 1.0, and the entire thesis of the project is in the diff: **bare telemetry can't grade tool choice; a trace that carries its tool catalog can.**
+
+## War story 6: my fixtures flattered me
+
+Feeling good, I pointed the whole thing at a _real_ session, my own from earlier that day, a rambling repo-setup conversation. The result was a wall of red. Most turns scored false, including tool choices that were obviously fine.
+
+I'd built a demo that only worked on demo input. Look at what my fixture prompts had in common: "Show me the contents of src/server.py." "What git branch is this repo on?" "How many Python files are in src/?" Every one is **self-contained**, a complete question you can grade in isolation. Real sessions are nothing like that. Real sessions are full of "yes do", "let's do option A", "#1", "leave it be". Half of what you say to a coding agent only means something in the context of what came before.
+
+And my emitter was throwing that context away. Each turn became its own trace whose input was _only that turn's user message_. So the judge was being handed "yes do" with no history and asked whether the tool choice was correct. That's unanswerable, and an honest judge says so, which comes out as false. The most damning example: I'd said `do #1`, the agent ran a shell command, and confirmed it had removed a redundant clone, a perfectly good move, scored false purely because the judge couldn't see that "#1" referred to "delete the empty repo."
+
+The fix is conceptually obvious once you see it: put the **conversation so far** on each turn's input, not just the latest message. A compact rolling transcript of the prior turns, clearly delimited from the current ask, so the judge can resolve the reference before grading the choice. About forty lines.
+
+Re-scored, the context-dependent turns came back to life. The judge's own explanation on the "yes do" turn now reads:
+
+> "'yes do' … is a direct affirmation to a previously asked question. Looking at the chat history, the assistant had just asked: 'Want me to: A) Add an [includeIf …] block … B) …'"
+
+It resolves the reference through the history, _then_ grades the tool choice. The remaining failures became real, defensible judgments instead of shrugs.
+
+I want to be honest that this is a hack, not a finished design. Stuffing a text transcript into every turn's input re-sends the whole history on each turn (token cost climbs with conversation length), it's a flat blob rather than a structured multi-turn exchange, and a fixed character budget can truncate the very earlier turn that mattered. Scalable versions exist, and they're the right long-term shape: emit the turns as a **structured, role-tagged message sequence** so the platform treats it as a real conversation; **score at the session level** with native access to prior turns rather than duplicating context into every trace; or **summarize / retrieve** only the earlier turns a given turn actually references instead of a blind window. Those are for another day. The lesson that generalizes is the cheap one:
+
+> **Self-contained eval fixtures flatter you.** The hard part of evaluating an agent is exactly the multi-turn context that toy inputs don't have. Test on a real trajectory early, before you convince yourself it works.
 
 ## How the judging actually works: ChainPoll
 
@@ -389,7 +426,7 @@ The end state is genuinely useful: a real Claude Code session, rendered as an ag
 
 Working end-to-end is not the same as finished. Three threads are deliberately left hanging, and each is meaty enough to be its own post.
 
-**Sessions that outlive themselves.** Claude Code lets you _continue_ or _resume_ a conversation, and the resumed session gets a **new session id** for what is logically the same thread. Two consequences: the resumed thread shows up as a _separate_ Session in Galileo unless you chain it to its predecessor, and, sneakier, a resumed transcript _contains the earlier turns_, so naively re-sending it duplicates history under a new id. Galileo has a session-chaining concept ("this session continues that one"); wiring continuation detection into the send path is Part II material.
+**Sessions that outlive themselves, and sends that don't replace.** Two related problems, both about identity. First, re-sending is not idempotent: my emitter lets fresh span ids get generated on every run, so sending the same session twice _piles up_ duplicate turns instead of updating in place. The clean fix is to derive deterministic ids from the session and turn, so a re-send overwrites rather than accumulates. Second, Claude Code lets you _continue_ or _resume_ a conversation, and the resumed session gets a **new session id** for what is logically the same thread, which shows up as a _separate_ Session unless you chain it to its predecessor, and, sneakier, a resumed transcript _contains the earlier turns_, so re-sending it duplicates history under a new id. Galileo has a session-chaining concept ("this session continues that one"); wiring both deterministic ids and continuation detection into the send path is Part II material.
 
 **Point-in-time catalog fidelity.** The hybrid catalog is truthful for the session you're in, and retroactive sends fall back to the baseline. But the deeper version of this problem, _what exactly was on the menu at the moment of each historical turn_, needs the catalog captured at session time, not send time. Think of it as snapshotting the menu alongside the meal.
 
