@@ -55,3 +55,5 @@ If you only take one idea from this opener, take this one: **the moment your sys
 ---
 
 **Next in the series:** [Part 2, Galileo Sessions: Grading the Whole Conversation](/posts/galileo-sessions-grading-the-whole-conversation), where the trajectory idea meets the actual feature and its sharp edges.
+
+**The code** for this series (the emitter, the manual send command, and the example sessions) lives at [github.com/KazChe/blogs-sample-code](https://github.com/KazChe/blogs-sample-code).
