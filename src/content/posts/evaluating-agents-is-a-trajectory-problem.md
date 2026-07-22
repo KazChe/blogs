@@ -1,5 +1,5 @@
 ---
-title: "Evaluating an AI Agent Is a Trajectory Problem (Part 1)"
+title: "Evaluating an AI Agent Is a Trajectory Problem"
 datePublished: 2026-07-22T12:00:00.000Z
 slug: evaluating-agents-is-a-trajectory-problem
 cover: https://dhbtuus86mod.cloudfront.net/trajectory-eval.png
@@ -51,3 +51,7 @@ Here's the road ahead.
 This is a build log at heart, so expect the useful material to be in the detours: the assumptions that turned out wrong, the score that looked great and meant nothing, the fix that was obvious only in hindsight. That's the stuff worth writing down.
 
 If you only take one idea from this opener, take this one: **the moment your system stops giving answers and starts taking journeys, your evaluation has to grow up and grade the journey.** The rest of the series is about doing that honestly.
+
+---
+
+**Next in the series:** [Part 2, Galileo Sessions: Grading the Whole Conversation](/posts/galileo-sessions-grading-the-whole-conversation), where the trajectory idea meets the actual feature and its sharp edges.

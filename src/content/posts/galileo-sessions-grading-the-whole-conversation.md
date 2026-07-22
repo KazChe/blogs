@@ -95,4 +95,6 @@ Sessions are what turn a heap of per-turn traces into an evaluable trajectory, a
 
 What I have not done yet in this series is grade the decisions themselves with any real rigor. I've leaned on a judge to show that context matters, but I haven't picked a concrete agentic metric and pushed on what it actually takes to make an automated judge grade *well* rather than wave everything through. That turns out to be its own tangle of war stories, and it's where the next part goes.
 
-<!-- TODO: link Part 3 (the Tool Selection Quality deep-dive) here once it exists. -->
+---
+
+**Next in the series:** [Part 3, Scoring Your Coding Agent's Tool Choices](/posts/scoring-your-coding-agents-tool-choices-with-galileo), where I pick one agentic metric and push on what it takes to make an automated judge grade a decision well.
