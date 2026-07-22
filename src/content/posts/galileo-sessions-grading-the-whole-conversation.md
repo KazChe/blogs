@@ -11,7 +11,7 @@ Part 1, [Evaluating an AI Agent Is a Trajectory Problem](/posts/evaluating-agent
 
 In [Part 1](/posts/evaluating-agents-is-a-trajectory-problem) I made a claim and left it hanging: evaluating an agent means evaluating a whole trajectory, in context, as one connected thing, and that puts a specific demand on your tooling. This post is about the piece of Galileo that meets that demand, **Sessions**, and about the things that only became obvious once I tried to grade real conversations with it.
 
-A Session is exactly what it sounds like: a multi-turn conversation treated as one native record, with every turn grouped underneath it, rather than a scattering of unrelated traces that happen to share some metadata. That one change, turns-belong-to-a-conversation instead of turns-float-free, is what lets a scorer grade a turn *inside* the trajectory it came from. And as I'll get to, that context is not a nicety. For a lot of turns it's the difference between a gradeable decision and an unanswerable one.
+A Session, in Galileo's terms, groups the related traces, spans, and events of a single interaction into one native record. For my use case that interaction is a multi-turn conversation, so throughout this post that is the lens I'll use: a Session is the whole conversation, with every turn grouped underneath it, rather than a scattering of unrelated traces that happen to share some metadata. That one change, turns-belong-to-a-conversation instead of turns-float-free, is what lets a scorer grade a turn *inside* the trajectory it came from. And as I'll get to, that context is not a nicety. For a lot of turns it's the difference between a gradeable decision and an unanswerable one.
 
 To keep this concrete I used a coding agent as the source of real trajectories, for all the reasons laid out in Part 1. The full transcript of every session it runs is already on disk, so I have a supply of genuine multi-turn conversations to feed in. Let me start with how one of those transcripts becomes a Session.
 
@@ -32,7 +32,7 @@ That gives you a trace per turn. On its own, though, a stack of per-turn traces 
 
 ## Turning turns into a Session
 
-This is the part that just works, and it's worth appreciating precisely because so little of the rest of this post does. OpenTelemetry has a standard attribute for "these spans belong to the same conversation," `gen_ai.conversation.id`. Tag every span for a session with the same conversation id, and Galileo folds all of those turns into a single native Session, keyed by that id. No custom grouping logic, no post-processing job. Emit the attribute and the Session assembles itself.
+This is the part that just works, and it's worth appreciating precisely because so little of the rest of this post does. Galileo resolves a Session from any of a few span attributes, checking `session.id` first, then the GenAI-standard `gen_ai.conversation.id`, then a couple of others. I reached for `gen_ai.conversation.id` because it's the OpenTelemetry semantic-convention attribute for "these spans belong to the same conversation," so my spans stay portable. Tag every span for a session with the same conversation id, and Galileo folds all of those turns into a single native Session, keyed by that id. No custom grouping logic, no post-processing job. Emit the attribute and the Session assembles itself.
 
 ![The Galileo view of one Session expanded to show its child traces: every turn of the coding-agent conversation folded under a single Session via the gen_ai.conversation.id attribute, with each turn's invoke_agent, chat, and tool spans nested beneath it.](https://dhbtuus86mod.cloudfront.net/Shot1_session_grouping.png)
 
@@ -84,7 +84,7 @@ The second edge is subtler and it comes straight from how agents actually get us
 
 Two things fall out of that, and both bite:
 
-- **The resumed thread shows up as a separate Session.** Same conversation in every human sense, two distinct Session records in Galileo, unless you explicitly tell the platform that this session continues that earlier one. Galileo has a session-chaining concept for exactly this ("this session is a continuation of that one"), but something has to detect the continuation and wire it up. It doesn't happen for free.
+- **The resumed thread shows up as a separate Session.** Same conversation in every human sense, two distinct Session records in Galileo, unless you tell the platform that one continues the other. Galileo can do that: it has a "this session continues that one" link. The catch is that, as far as I could find, you set it through the session API, not on a span. My emitter only sends spans, so it can't request the link at all. Someone would have to detect the continuation and make a separate API call to wire it up. So no, it doesn't happen for free.
 - **A resumed transcript contains the earlier turns.** So if you naively re-send it, you duplicate all of that history under a brand-new identity, which is the previous sharp edge wearing a disguise.
 
 Detecting continuations and chaining them, rather than letting a long-lived conversation fragment into a pile of disconnected Sessions, is real work. I'm deliberately flagging it here rather than pretending it's solved, because "the identity of a conversation over time" is exactly the sort of nuance that only surfaces once you take trajectories, and Sessions, seriously.

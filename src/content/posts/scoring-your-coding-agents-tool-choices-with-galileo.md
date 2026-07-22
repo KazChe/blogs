@@ -52,9 +52,9 @@ This is the most important gotcha in the whole project, so it's worth stating pl
 
 **A judge can only assess whether the _right_ tool was chosen if it knows what tools were _available_ and what they are for.** Think about it from the judge's seat. If the only tool it can see is the one that was called, then the agent "correctly" selected from a menu of one, every time. To flag "you should have used Grep instead of WebSearch," the judge has to know Grep was on the menu at all.
 
-And here is the trap: a bare OpenTelemetry GenAI trace **doesn't carry the available-tool catalog**. It records the tool that was _called_, not the set the agent could have chosen from. So the judge has no alternatives to compare against, and everything passes.
+And here is the trap: a bare OpenTelemetry GenAI trace **doesn't carry the available-tool catalog**. It records the tool that was _called_, not the set the agent could have chosen from. That list isn't an enrichment the judge merely benefits from; it's a structural input the metric is built to read. Leave it off and the judge has no alternatives to compare against, so it doesn't get cautious, it gets toothless, and everything passes.
 
-> **Takeaway:** an agent trace is unscoreable for _tool choice_ until it carries the agent's tool catalog. Without it, "Tool Selection Quality" silently degrades to "did you call a tool that exists," which is always a yes.
+> **Takeaway:** an agent trace is unscoreable for _tool choice_ until it carries the agent's tool catalog. The available-tools list isn't optional context, it's what the metric keys off. Without it, "Tool Selection Quality" silently degrades to "did you call a tool that exists," which is always a yes.
 
 ## War story 2: teaching the trace its tool catalog
 
@@ -104,7 +104,7 @@ I re-sent the bad-choices session, fully expecting vindication.
 
 Every turn scored **`false`**, including the turn where the agent had done the obviously _correct_ thing (using Read to show a file).
 
-That's a different failure, and it's a good one to understand. The judge assesses tool selection by reading the model's **output** for that turn, the thing the model _produced_. But my emitter had split the work: the assistant's reasoning text went on the chat span, while the actual tool call went on a _separate_ execution span. So the judge looked at the model's output, saw prose but no tool call, and concluded "tools were available and the model failed to call one." Wrong, for everything.
+That's a different failure, and it's a good one to understand. The judge reads the whole LLM span for a turn: the user's ask, the available tools, and the model's **output**, the part it actually _produced_. That produced output is where it expects to find the tool call. But my emitter had split the work: the assistant's reasoning text went on the chat span, while the actual tool call went on a _separate_ execution span. So the judge looked at the produced output, saw prose but no tool call, and concluded "tools were available and the model failed to call one." Wrong, for everything.
 
 The fix was small: render the chosen tool call **into the chat span's output**, right alongside the reasoning, so "the model selected `Read(file_path=...)`" is visible where the judge is actually looking.
 

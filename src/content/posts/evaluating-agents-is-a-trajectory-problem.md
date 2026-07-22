@@ -31,7 +31,7 @@ Point observability at an agent today and the usual thing you get is a usage das
 
 The thing that's usually missing is the ability to treat a whole multi-turn conversation as a single, first-class object you can reason about and score, with every turn sitting inside the context of the ones before it. Not a bag of unrelated log lines that happen to share an id. An actual trajectory.
 
-That capability is what this series is about. Galileo now treats a multi-turn conversation as a first-class citizen: a **Session**. Every turn is grouped under one native Session record, and the agentic scorers get to grade each turn inside the conversation it actually belongs to. That reframes evaluation from "grade the answers" to "grade the journey," which, per everything above, is the version that actually tells you something about an agent.
+That capability is what this series is about. Galileo now treats a multi-turn conversation as a first-class citizen: a **Session**. Every turn is grouped under one native Session record, so a turn can be graded in the context of the conversation it belongs to, not in isolation. That reframes evaluation from "grade the answers" to "grade the journey," which, per everything above, is the version that actually tells you something about an agent. (Making that context actually reach the judge turns out to take real work, which is a Part 2 story.)
 
 ## Why a coding agent is the vehicle
 
