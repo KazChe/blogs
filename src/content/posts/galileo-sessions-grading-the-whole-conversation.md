@@ -1,6 +1,6 @@
 ---
 title: "Galileo Sessions: Grading the Whole Conversation"
-datePublished: 2026-07-29T12:00:00.000Z
+datePublished: 2026-07-22T12:00:00.000Z
 slug: galileo-sessions-grading-the-whole-conversation
 cover: https://dhbtuus86mod.cloudfront.net/ai-agent-trajectory-illustration.png
 ---
@@ -98,3 +98,5 @@ What I have not done yet in this series is grade the decisions themselves with a
 ---
 
 **Next in the series:** [Part 3, Scoring Your Coding Agent's Tool Choices](/posts/scoring-your-coding-agents-tool-choices-with-galileo), where I pick one agentic metric and push on what it takes to make an automated judge grade a decision well.
+
+**The code** for this series (the emitter, the manual send command, and the example sessions) lives at [github.com/KazChe/blogs-sample-code](https://github.com/KazChe/blogs-sample-code).

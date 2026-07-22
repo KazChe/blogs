@@ -1,6 +1,6 @@
 ---
 title: "Scoring Your Coding Agent's Tool Choices"
-datePublished: 2026-08-05T12:00:00.000Z
+datePublished: 2026-07-22T12:00:00.000Z
 slug: scoring-your-coding-agents-tool-choices-with-galileo
 cover: https://dhbtuus86mod.cloudfront.net/scoring-coding-agent-tool-choices.png
 ---
@@ -196,6 +196,6 @@ Two threads I'm deliberately leaving for later.
 
 **Everything cloud-native.** This whole series is one developer, one machine, sending sessions by hand to one Galileo instance. Taking it further, persisting and resuming a conversation across time and machines, chaining the sessions that outlive their identity (the sharp edge from Part 2), a durable thread registry, an event-driven send pipeline, credentials off the laptop, and tool-selection scores aggregated across a team, is a genuine engineering effort rather than an editorial one. It needs the emitter refactored and new hooks for cloud integration, so it earns its own series rather than a paragraph here. That's where I'm headed next.
 
-<!-- TODO: add the companion repo link once published (the emitter, the manual send
-command, and the example sessions). Draft footer line:
-"Want the companion repo? <link>" -->
+---
+
+**The code.** The emitter, the manual send command, and the example sessions used across this series live in the companion repo: [github.com/KazChe/blogs-sample-code](https://github.com/KazChe/blogs-sample-code).
