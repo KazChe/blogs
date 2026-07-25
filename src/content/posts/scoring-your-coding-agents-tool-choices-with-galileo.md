@@ -172,9 +172,6 @@ Second, and more importantly: **transcripts contain your code, your prompts, and
 
 So sending is a **deliberate, human-in-the-loop action**: a single command you run when _you_ decide this session is worth logging. It finds the current session's transcript, sanitizes it, and sends it. Nothing leaves your machine until you say so. And, as War story 2 showed, running from inside the live session is exactly what lets the agent report its own current tool menu.
 
-<!-- TODO screenshot 5 (optional): the terminal moment of invoking the manual "send this
-session" command and its confirmation output (which session was sent, to which
-project/log stream). Reinforces the "nothing auto-exfiltrated" story. -->
 
 > **Takeaway:** for anything that ships developer sessions somewhere, opt-in beats automatic. It's a better privacy posture _and_ a better story to tell your security team.
 
