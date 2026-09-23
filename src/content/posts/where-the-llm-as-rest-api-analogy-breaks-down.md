@@ -73,3 +73,7 @@ Pass one catches the model when it drifts (stretch point #2); pass two guarantee
 ## Closing
 
 These four stretch points are why LLM systems aren't just REST clients with extra steps. But notice that none of them break the frame - they bend it. Once you stop treating non-determinism, schema-as-hope, token economics, and meaning-failures as problems to eliminate and start treating them as constraints to design around, the architecture stops feeling weird and starts feeling inevitable. The code lives at [github.com/KazChe/bug-cli-ai-agent](https://github.com/KazChe/bug-cli-ai-agent).
+
+---
+
+**Next in the series:** [Part III](https://untounium.dev/posts/when-the-unreliable-api-tells-you-how-unreliable-it-is), where the bucket decision moves to a model that returns a probability distribution instead of text, and each of the four bends above gets re-checked against the same corpus.
