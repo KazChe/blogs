@@ -148,7 +148,7 @@ The rows where at least one engine disagreed with my labels, last run of each:
 | v-04 (bare React stack trace) | too vague | partial | too vague | 0.64 |
 | n-05 (hostile rant about the price) | non bug | too vague | too vague | 0.98 |
 
-Two of Part II's three published misses went Jev's way. The Okta outage that Sonnet has waffled on since June came back actionable three times at 0.98. The bare stack trace that Sonnet calls partial came back too vague three times, at 0.64, the lowest confidence of any correct answer in the run. That row is where the seoTitle comes from.
+Two of Part II's three published misses went Jev's way. The Okta outage that Sonnet has waffled on since June came back actionable three times at 0.98. The bare stack trace that Sonnet calls partial came back too vague three times, at 0.64, the lowest confidence of any correct answer in the run.
 
 Jev's own misses split into two kinds. The contract-review complaint (p-01) and the mangled docx export (p-02) sit on the actionable-versus-partial boundary, and Jev was unsure about both: 0.68 and 0.54, with a quarter to a third of the probability sitting on the label I wanted. Those are the kind of misses a distribution is for. v-01 is different. Jev filed a four-word all-caps complaint as partial with 0.92 confidence, and when I went back to my frozen criteria I found out why. My description of too_vague says it is "not for messages that name both a product area and a symptom." That message names upload and names broken. Jev read my rule literally and applied it, exactly as the docs said it would. My label and my criterion disagree, and the model sided with the criterion. The criteria stay frozen; the miss stays in the number.
 
