@@ -2,7 +2,7 @@
 title: "The LLM is just an unreliable third-party REST API on TypeSafe's Jev - Part III"
 datePublished: 2026-09-22T12:00:00.000Z
 slug: when-the-unreliable-api-tells-you-how-unreliable-it-is
-cover: https://dhbtuus86mod.cloudfront.net/llm-unreliable-api-part-iii.jpg
+cover: https://dhbtuus86mod.cloudfront.net/jev-editorial-cover.jpg
 seoTitle: "200 OK, 64% Sure"
 seoDescription: "Re-running the bug-report classifier's bucket decision through TypeSafe's Jev, a model that returns a probability distribution instead of text, and checking which of Part II's four bends in the REST API analogy disappear, bend further, or stay."
 tags: llm-as-rest-api, typesafe, jev, evaluation, classification
@@ -49,7 +49,7 @@ One more thing the docs are clear about: Choice and Score confidence summarizes 
 
 I wrote these down in the plan file before the first live call, so they are on record. For each of Part II's bends:
 
-**Bend 1, non-determinism.** Testable now. I'd run the corpus three times through each engine and compare. My guess was that Jev would come back identical, or close to it, and Sonnet would not.
+**Bend 1, non-determinism.** Testable now. There are two engines in play, Jev for the bucket decision and claude-sonnet-4-6 as the published baseline, and I'd run the corpus three times through each of them and compare. My guess was that Jev would come back identical, or close to it, and Sonnet would not.
 
 **Bend 2, schema as hope.** This one should disappear for the decision. A Choice cannot return a label you did not define, cannot return two labels, and cannot return prose. The output is typed by construction, so the first `safeParse` in the pipeline has nothing to catch. The drafted fields still come from an LLM, so the second pass stays.
 
