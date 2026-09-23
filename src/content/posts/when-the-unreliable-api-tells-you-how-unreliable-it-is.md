@@ -160,6 +160,18 @@ A side experiment worth one paragraph. Alongside the Choice, I asked Jev the thr
 
 **Latency and cost.** Sonnet's per-call latency tracks how much it writes: about 7 seconds for the two buckets that refuse to draft, about 17 seconds for the two that draft, averaged over the three runs. Output tokens are 81 percent of its cost. Priced per 1,000 reports from captured usage, the refusing buckets cost about $6.68 and the drafting buckets about $14.27, against Jev's $0.044 for the decision alone. Per report, that is a gap of more than 200 times against Sonnet's average, and about 150 times even against Sonnet's cheapest path, the refusing buckets. Per pipeline, it is much smaller, and here is why. I did not run the hybrid engine over the corpus, but its cost can be built from the two runs I did measure: Jev's decision for every report, plus a Sonnet drafting call for the half of this corpus that is actionable or partial, plus nothing for the half answered from templates. That comes to roughly $7.18 per 1,000 against $10.48 for the default engine, a saving of about 31 percent, and the estimate is if anything slightly high, because the hybrid's drafting prompt is shorter. The two buckets the hybrid never sends to the LLM are also the two the LLM was cheapest on, since it writes little for them. What the hybrid does buy those two buckets is latency: from about 7 seconds to about 200 milliseconds, since for them the Jev call is the whole pipeline.
 
+The same latency numbers as multiples, so nobody has to do the division. The first three rows compare Jev's bucket decision with Sonnet's single call that decided the bucket and drafted the fields, which is the call the original pipeline made. The last two split Sonnet by what it had to write.
+
+| Comparison | Sonnet | Jev | Jev faster by |
+| --- | --- | --- | --- |
+| Mean | 11.7 s | 203 ms | about 58x |
+| Median | 14.2 s | 195 ms | about 73x |
+| p95 | 19.9 s | 261 ms | about 76x |
+| Sonnet's refusing buckets only, mean | 6.9 s | 203 ms | about 34x |
+| Sonnet's drafting buckets only, mean | 16.6 s | 203 ms | about 82x |
+
+The conservative number is the 34x, against Sonnet's quickest path. The honest headline is the 58x, mean against mean.
+
 **The confidence dial.** This is the table I was after. Every Jev answer comes with a confidence number between 0 and 1. For each threshold below, the table shows how many of the twenty rows had a confidence at or above it, and how often those rows matched my labels:
 
 | Threshold | Rows at or above | Agreement on those rows |
