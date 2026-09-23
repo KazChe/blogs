@@ -29,7 +29,7 @@ Frontmatter schema:
 title: "Post title"
 datePublished: 2026-05-24T10:00:00.000Z
 cover: https://cdn.example.com/cover.jpg            # or /images/local.jpg
-seoTitle: "Optional shorter title for SEO"          # optional
+seoTitle: "Optional shorter title"                  # optional; used as the Open Graph / Twitter title for link previews
 seoDescription: "Optional summary, also used as the homepage excerpt and meta description."  # optional
 ogImage: https://cdn.example.com/og-image.png       # optional, falls back to cover
 tags: tag-one, tag-two, tag-three                   # optional, comma-separated; first tag shows as category pill

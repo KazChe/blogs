@@ -32,7 +32,7 @@ const tags = tagList(post);
 <Layout
   title={`${post.data.title} — Margins`}
   description={postExcerpt}
-  ogTitle={post.data.title}
+  ogTitle={post.data.seoTitle ?? post.data.title}
   ogDescription={postExcerpt}
   ogImage={post.data.ogImage ?? post.data.cover}
   ogType="article"

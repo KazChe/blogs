@@ -1,6 +1,5 @@
 ---
 title: "Discoveries: Building a Support Copilot with Kilo Code"
-seoTitle: "kilocode "
 datePublished: 2026-04-23T00:06:49.788Z
 cuid: cmoaq1yus006a1qkbecwla4cp
 slug: building-a-support-copilot-with-kilo-code

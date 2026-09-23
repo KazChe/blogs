@@ -1,6 +1,5 @@
 ---
 title: "Tracing AI Agent Calls Across Service Boundaries with OTel Collector and Galileo"
-seoTitle: "demo distributed tracing otel collector and galileo"
 seoDescription: "demo for showcasing distributed tracing using multiple application services+OTel Collector+Galileo Observability"
 datePublished: 2026-03-26T04:56:43.639Z
 cuid: cmn702xdh00op2dmmgjvs3pa4
