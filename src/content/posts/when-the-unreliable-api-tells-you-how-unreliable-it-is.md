@@ -3,7 +3,7 @@ title: "The LLM is just an unreliable third-party REST API - Part III: TypeSafe'
 datePublished: 2026-09-22T12:00:00.000Z
 slug: when-the-unreliable-api-tells-you-how-unreliable-it-is
 cover: https://dhbtuus86mod.cloudfront.net/jev-editorial-cover.jpg
-seoTitle: "200 OK, 64% Sure"
+seoTitle: "200 OK, 73% Sure"
 seoDescription: "Re-running the bug-report classifier's bucket decision through TypeSafe's Jev, a model that returns a probability distribution instead of text, and checking which of Part II's four bends in the REST API analogy disappear, bend further, or stay."
 tags: llm-as-rest-api, typesafe, jev, evaluation, classification
 ---
@@ -148,7 +148,7 @@ The rows where at least one engine disagreed with my labels, last run of each:
 | v-04 (bare React stack trace) | too vague | partial | too vague | 0.64 |
 | n-05 (hostile rant about the price) | non bug | too vague | too vague | 0.98 |
 
-Two of Part II's three published misses went Jev's way. The Okta outage that Sonnet has waffled on since June came back actionable three times at 0.98. The bare stack trace that Sonnet calls partial came back too vague three times, at 0.64, the lowest confidence of any correct answer in the run.
+Two of Part II's three published misses went Jev's way. The Okta outage that Sonnet has waffled on since June came back actionable three times at 0.98. The bare stack trace that Sonnet calls partial came back too vague three times, with 0.73 of the probability on that answer and a confidence of 0.64, the lowest confidence of any correct answer in the run.
 
 Jev's own misses split into two kinds. The contract-review complaint (p-01) and the mangled docx export (p-02) sit on the actionable-versus-partial boundary, and Jev was unsure about both: 0.68 and 0.54, with a quarter to a third of the probability sitting on the label I wanted. Those are the kind of misses a distribution is for. v-01 is different. Jev filed a four-word all-caps complaint as partial with 0.92 confidence, and when I went back to my frozen criteria I found out why. My description of too_vague says it is "not for messages that name both a product area and a symptom." That message names upload and names broken. Jev read my rule literally and applied it, exactly as the docs said it would. My label and my criterion disagree, and the model sided with the criterion. The criteria stay frozen; the miss stays in the number.
 
@@ -160,7 +160,7 @@ A side experiment worth one paragraph. Alongside the Choice, I asked Jev the thr
 
 **Latency and cost.** Sonnet's per-call latency tracks how much it writes: about 7 seconds for the two buckets that refuse to draft, about 17 seconds for the two that draft, averaged over the three runs. Output tokens are 81 percent of its cost. Priced per 1,000 reports from captured usage, the refusing buckets cost about $6.68 and the drafting buckets about $14.27, against Jev's $0.044 for the decision alone. Per report, that is a gap of more than 200 times against Sonnet's average, and about 150 times even against Sonnet's cheapest path, the refusing buckets. Per pipeline, it is much smaller, and here is why. I did not run the hybrid engine over the corpus, but its cost can be built from the two runs I did measure: Jev's decision for every report, plus a Sonnet drafting call for the half of this corpus that is actionable or partial, plus nothing for the half answered from templates. That comes to roughly $7.18 per 1,000 against $10.48 for the default engine, a saving of about 31 percent, and the estimate is if anything slightly high, because the hybrid's drafting prompt is shorter. The two buckets the hybrid never sends to the LLM are also the two the LLM was cheapest on, since it writes little for them. What the hybrid does buy those two buckets is latency: from about 7 seconds to about 200 milliseconds, since for them the Jev call is the whole pipeline.
 
-The same latency numbers as multiples, so nobody has to do the division. The first three rows compare Jev's bucket decision with Sonnet's single call that decided the bucket and drafted the fields, which is the call the original pipeline made. The last two split Sonnet by what it had to write.
+The same latency numbers as multiples, so nobody has to do the division. The first three rows compare Jev's bucket decision with Sonnet's single call that decided the bucket and drafted the fields, which is the call the original pipeline made. The last two split both engines by bucket: Sonnet by what it had to write, and Jev on the same rows, where it turns out not to care.
 
 Take the multiples with some salt. They come from 60 calls per engine, on one evening, from one laptop, at each API's default settings, and they compare a model that returns four numbers with a model that also wrote a ticket. They are not a benchmark. They are the shape of the gap on this workload, and the shape is the part I would expect to hold.
 
@@ -169,10 +169,10 @@ Take the multiples with some salt. They come from 60 calls per engine, on one ev
 | Mean | 11.7 s | 203 ms | about 58x |
 | Median | 14.2 s | 195 ms | about 73x |
 | p95 | 19.9 s | 261 ms | about 76x |
-| Sonnet's refusing buckets only, mean | 6.9 s | 203 ms | about 34x |
-| Sonnet's drafting buckets only, mean | 16.6 s | 203 ms | about 82x |
+| Refusing buckets only, mean | 6.9 s | 206 ms | about 33x |
+| Drafting buckets only, mean | 16.6 s | 199 ms | about 83x |
 
-The conservative number is the 34x, against Sonnet's quickest path. The honest headline is the 58x, mean against mean.
+The conservative number is the 33x, against Sonnet's quickest path. The honest headline is the 58x, mean against mean.
 
 **The confidence dial.** This is the table I was after. Every Jev answer comes with a confidence number between 0 and 1. For each threshold below, the table shows how many of the twenty rows had a confidence at or above it, and how often those rows matched my labels:
 
@@ -193,7 +193,7 @@ The three identical rows are not a mistake. No answer in the run landed between 
 
 **Bend 1, the same input does not always give the same answer: stayed, but now you can watch it.** Across three runs, Jev kept all twenty answers and shifted the probabilities behind ten of them, by up to 0.07. Sonnet kept nineteen answers and flipped one, and because it returns a label with no numbers behind it, there is no way to know how close the other nineteen came to flipping. Neither engine can be tested for equality, so both still need a pass-rate floor. What Jev adds is a second thing to measure: you can put a tolerance on the probabilities themselves and notice drift before it changes an answer.
 
-**Bend 2, the schema is a hope: gone for the decision, unchanged for the draft.** When Sonnet writes a JSON object, you have to validate it afterward, because it can leave out a field or add one that does not belong. Jev never writes an object. It returns one of the four bucket names I gave it, and the API guarantees that, so for the bucket decision there is nothing left to validate beyond a sanity check on the returned label, which never fired in 63 calls. Sonnet still writes the ticket fields, and those still get validated the same way.
+**Bend 2, the schema is a hope: gone for the decision, unchanged for the draft.** When Sonnet writes a JSON object, you have to validate it afterward, because it can leave out a field or add one that does not belong. Jev never writes an object. It returns one of the four bucket names I gave it, and the API guarantees that, so for the bucket decision there is nothing left to validate beyond a sanity check on the returned label, which never fired in 63 eval calls. Sonnet still writes the ticket fields, and those still get validated the same way.
 
 **Bend 3, you pay by the token, not by the call: stayed, and got more specific.** It turns out you mostly pay by the tokens coming back. Four fifths of Sonnet's bill is what it writes. Jev writes nothing, and by the estimate above the hybrid engine saves about 31 percent by not asking for prose where none is needed. The bill is still a token bill; it just has a different shape.
 
