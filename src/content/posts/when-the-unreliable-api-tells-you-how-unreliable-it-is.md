@@ -162,6 +162,8 @@ A side experiment worth one paragraph. Alongside the Choice, I asked Jev the thr
 
 The same latency numbers as multiples, so nobody has to do the division. The first three rows compare Jev's bucket decision with Sonnet's single call that decided the bucket and drafted the fields, which is the call the original pipeline made. The last two split Sonnet by what it had to write.
 
+Take the multiples with some salt. They come from 60 calls per engine, on one evening, from one laptop, at each API's default settings, and they compare a model that returns four numbers with a model that also wrote a ticket. They are not a benchmark. They are the shape of the gap on this workload, and the shape is the part I would expect to hold.
+
 | Comparison | Sonnet | Jev | Jev faster by |
 | --- | --- | --- | --- |
 | Mean | 11.7 s | 203 ms | about 58x |
