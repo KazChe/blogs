@@ -2,8 +2,11 @@
 title: "The LLM is just an unreliable third-party REST API - Part I"
 datePublished: 2026-06-02T23:24:00.000Z
 slug: llm-is-just-an-unreliable-third-party-api
-cover: https://dhbtuus86mod.cloudfront.net/llm-unreliable-api.jpg 
+cover: https://dhbtuus86mod.cloudfront.net/llm-unreliable-api.jpg
+tags: llm-as-rest-api, anthropic, tool-use, zod
 ---
+
+*Part I of a series on treating the LLM as an unreliable third-party REST API*
 
 I've been trying to get a mental model of agentic AI applications into something that I'm familiar with when thinking about building an application. The first thing that came to mind was web applications. You have your front end, you have your service layer, you have your data store on a high level. The following is an example of building a very crude, very simple CLI that given an array of reported issues or bugs will use an AI agent to go through a discriminated union and classify them in different buckets. 
 

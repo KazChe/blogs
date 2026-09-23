@@ -3,7 +3,10 @@ title: "The LLM is just an unreliable third-party REST API - Part II"
 datePublished: 2026-06-03T00:20:00.000Z
 slug: where-the-llm-as-rest-api-analogy-breaks-down
 cover: https://dhbtuus86mod.cloudfront.net/llm-unreliable-api-dark.jpg
+tags: llm-as-rest-api, evaluation, anthropic
 ---
+
+*Part II of a series on treating the LLM as an unreliable third-party REST API*
 
 In [Part I](https://untounium.dev/posts/llm-is-just-an-unreliable-third-party-api), I argued that if you treat the LLM like an unreliable third-party REST API, your architecture mostly writes itself. That frame holds up surprisingly well, but it isn't the whole story. This post is about the four places where it stops fully explaining what's happening, plus the one product insight the frame never predicts.
 
