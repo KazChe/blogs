@@ -10,7 +10,7 @@ tags: untested-classifiers, evaluation, refactoring, claude-code, rope
 
 *Continues the series on guardrails as untested classifiers*
 
-A thread on LinkedIn last week made a claim and got an objection, and neither side had a number.
+A [thread on LinkedIn](https://lnkd.in/p/ereiE4i6) last week made a claim and got an objection, and neither side had a number.
 
 Jason Gorman made the claim. Frontier coding models now do the common refactorings "quite reliably out-of-the-box", and he keeps a library of small refactoring skills, each a summary plus one before/after example, for the gaps. Two replies made the objection. For refactorings you want a deterministic tool that handles the AST, because otherwise you have to review every affected line, and "quite reliably is not enough."
 
