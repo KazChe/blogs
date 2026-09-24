@@ -90,3 +90,5 @@ If I'm wrong and the regex holds up, that's a publishable result too: the boring
 The one-sentence version, the way I'd say it to someone in a hallway: **Agent Control runs your guardrail blind, a test set grades it, and almost nobody bothers to build the test set.**
 
 Let's go build the test set.
+
+**Next in the series:** [Part II: the self-policing Noul](https://untounium.dev/posts/the-self-policing-noul).
