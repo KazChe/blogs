@@ -2,7 +2,7 @@
 title: "Your guardrails are just untested classifiers - Part II: the self-policing Noul"
 datePublished: 2026-09-25T12:00:00.000Z
 slug: the-self-policing-noul
-cover: https://dhbtuus86mod.cloudfront.net/self-policing-noul-cover.jpg
+cover: https://dhbtuus86mod.cloudfront.net/turnstile-cover-working.png
 seoTitle: "Moved at 0.40, Flagged at 0.95"
 seoDescription: "Three prompt-injection guardrails for a bug-report classifier, scored on one frozen test set: Agent Control's built-in regex and phrase list, a Jev Noul asked in the same call as the decision it protects, and a Claude Sonnet judge."
 tags: untested-classifiers, typesafe, jev, agent-control, evaluation

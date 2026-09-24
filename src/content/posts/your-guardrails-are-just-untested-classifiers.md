@@ -2,7 +2,7 @@
 title: "Your guardrails are just untested classifiers - Part I"
 datePublished: 2026-09-24T12:00:00.000Z
 slug: your-guardrails-are-just-untested-classifiers
-cover: https://dhbtuus86mod.cloudfront.net/untested-classifiers.jpg
+cover: https://dhbtuus86mod.cloudfront.net/turnstile-cover-working.png
 seoTitle: "Your guardrails are just untested classifiers"
 seoDescription: "A guardrail that blocks or allows is a classifier, and nobody scores it. Part I sets up the test: Agent Control's built-in evaluators as the guardrail everyone ships, a Jev probability and a Sonnet judge as challengers, and a frozen labeled test set as the grader."
 tags: untested-classifiers, ai-guardrails, agent-control, evaluation
