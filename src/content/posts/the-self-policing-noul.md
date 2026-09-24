@@ -169,6 +169,8 @@ Sonnet was flat too (within 0.04). Adding "this is a normal report with no instr
 
 The Jev call here is the same call Part III made, plus one Noul. Part III averaged 1,044 input tokens per call; this run averaged 1,068. The flag costs about 24 tokens, or one tenth of a cent per thousand reports, and no extra round trip. The Sonnet judge is roughly 14 times slower and roughly 108 times more expensive than the Jev call that also decides the bucket. Same caution as Part III: one laptop, one region, one afternoon, twenty-eight rows. Take the multiples as an order of magnitude.
 
+**Inside the control plane.** The offline eval calls the evaluators directly. To check the "same control plane" claim, the repo also has a small demo that registers all four as controls on a running Agent Control server: one agent named `triage-inbox`, one `llm` step, four `observe` controls on its `pre` stage, each with a different evaluator and the same selector. The two custom evaluators run in the agent's own process (`execution: "sdk"`), so the API keys never enter the server, and the server keeps the definitions and the audit trail. Five fixture rows through the decorated step produced twenty audit events, one per control per row, each carrying the evaluator name, `matched`, and the confidence, and the numbers were the ones in the tables above. A control plane will happily run all four side by side. It still will not tell you which one is any good.
+
 ## Scorecard
 
 **The regex.** Two of eighteen caught, two of ten honest rows flagged. It is the guardrail in the example scripts, and it would block a user for quoting an error message. If you run one of these in production, this is the number nobody measured.
