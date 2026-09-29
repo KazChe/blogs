@@ -1,7 +1,7 @@
 ---
 title: "One Call, Three Controls"
 datePublished: 2026-09-30T12:00:00.000Z
-cover: https://dhbtuus86mod.cloudfront.net/jev-gate-howto-cover.png
+cover: https://dhbtuus86mod.cloudfront.net/01-hero-one-call-three-controls.png
 seoTitle: "A custom Agent Control evaluator, end to end"
 seoDescription: "How to put a model inside an Agent Control control as a custom evaluator, with TypeSafe's Jev as the worked example. The package, the contract, the entry point, the config, one Jev call shared by three controls, how steer reaches the agent, sdk versus server execution, offline tests with a fake client, and what lands in the audit events. Pinned to agent-control-sdk 8.8.0 and typesafe-sdk 0.7.1."
 tags: untested-classifiers, typesafe, jev, agent-control, evaluation
