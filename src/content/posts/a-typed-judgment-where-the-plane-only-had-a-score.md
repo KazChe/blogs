@@ -109,4 +109,6 @@ It is not a comparison with Luna, which I could not run. The claim is about the 
 
 It is also not a benchmark. Forty rows, four tools, rules I wrote, labels I wrote, one of them wrong. It is a shape, and the shape is that the control plane will run whatever you put at the evaluator's decision point and record everything it says. What it says is still yours to test.
 
+**Next in the series:** the build. [One Call, Three Controls](https://untounium.dev/posts/a-jev-evaluator-for-agent-control) walks the evaluator package, the three controls, the steer path, sdk versus server execution, the offline tests, and the audit events, in the order you would build your own.
+
 Code, fixture, the rules, every answer from every call, and the plane pass: [github.com/KazChe/tool-gate](https://github.com/KazChe/tool-gate). Earlier in the series, [Part I](https://untounium.dev/posts/your-guardrails-are-just-untested-classifiers), [Part II](https://untounium.dev/posts/the-self-policing-noul), and [Quite reliably, measured](https://untounium.dev/posts/quite-reliably-measured).
